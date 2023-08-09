@@ -1,21 +1,31 @@
-from utils.db_api.sqllite import Database
+import asyncio
+
+from utils.db_api.postgresql import Database
 
 
-def test():
-    db = Database(path_to_db='test.db')
-    db.create_table_users()
-    db.add_user(1, "One", "email", 'ru')
-    db.add_user(2, "olim", "olim@gmail.com", 'uz')
-    db.add_user(3, 1, 1)
-    db.add_user(4, 1, 1)
-    db.add_user(5, "John", "john@mail.com")
+async def test():
+    db = Database()
+    await db.create()
 
-    users = db.select_all_users()
-    print(f"Barcha fodyalanuvchilar: {users}")
+    print("Users jadvalini yaratamiz...")
+    await db.drop_users()
+    await db.create_table_users()
+    print("Yaratildi")
 
-    user = db.select_user(Name="John", id=5)
-    print(f"Bitta foydalanuvchini ko'rish: {user}")
+    print("Foydalanuvchilarni qo'shamiz")
+
+    await db.add_user("anvar", "sariqdev", 123456789)
+    await db.add_user("olim", "olim223", 12341123)
+    await db.add_user("1", "1", 131231)
+    await db.add_user("1", "1", 23324234)
+    await db.add_user("John", "JohnDoe", 4388229)
+    print("Qo'shildi")
+
+    users = await db.select_all_users()
+    print(f"Barcha foydalanuvchilar: {users}")
+
+    user = await db.select_user(id=5)
+    print(f"Foydalanuvchi: {user}")
 
 
-
-test()
+asyncio.run(test())
